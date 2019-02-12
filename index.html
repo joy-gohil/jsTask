@@ -8,10 +8,19 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css" integrity="sha384-PDle/QlgIONtM1aqA2Qemk5gPOE7wFq8+Em+G/hmo5Iq0CCmYZLv3fVRDJ4MMwEA" crossorigin="anonymous">
 
     <title>JS Task LMS</title>
+
+    <script type="text/javascript" src="js/Storage.js"></script>
+    <script type="text/javascript" src="js/LMSMaster.js"></script>
+    <script type="text/javascript" src="js/Course.js"></script>
+    <script type="text/javascript" src="js/Participant.js"></script>
+    <script type="text/javascript" src="js/Admin.js"></script>
+
     <script type="text/javascript">
       let userItem, courseItem;
+      let admin;
       function onPageloadTM(){
         document.getElementById("loginSection").classList.remove("d-none");
+        admin = new Admin("joy","admin@lms.com","admin");
         cloning();
       }
       function cloning() {
@@ -21,30 +30,57 @@
           document.getElementById("courseItem").remove();
       }
       function beginLogin(){
-        let uname = document.getElementById("email");
-        let pass = document.getElementById("pass");
-        let user ;//= verify();
-        user = "admin";
-        if(user == "admin"){
+        let uname = document.getElementById("email").value;
+        let pass = document.getElementById("pass").value;
+        let user = (admin.adminLogin(uname,pass).result)?"admin":"regular";
+        //let user = "admin";
+        if(user === "admin"){
           document.getElementById("loginSection").remove();
           document.getElementById("navBarUL").classList.remove("d-none");
           document.getElementById("courseList").classList.remove("d-none");
           document.getElementById("participantList").classList.remove("d-none");
+          setCourseList(admin.lmsMaster.courses);
+          setParticipantList(admin.lmsMaster.participants);
         }else if(user == "regular"){
           document.getElementById("loginSection").remove();
           document.getElementById("navBarUL").classList.remove("d-none");
           document.getElementById("courseList").classList.remove("d-none");
           document.getElementById("participantList").remove();
+          setCourseList();
         }
       }
-      function setCourseList(){
+      function addParticipants(){
+        let name = document.getElementById("pname").value;
+        let pid = document.getElementById("pid").value;
+        let password = document.getElementById("ppassword").value;
+        admin.addParticipant(name, pid, password);
+        setParticipantList(admin.lmsMaster.participants);
+      }
+      function addCourse(){
+        let title = document.getElementById("ctitle").value;
+        let time = document.getElementById("ctime").value;
+        let desc = document.getElementById("cdesc").value;
+        console.log(title +" : "+ time +" : "+ desc);
+        admin.addCourse(title, desc, time);
+        setCourseList(admin.lmsMaster.courses);      
+      }
+      function setCourseList(courseList){
         let section = document.getElementById("courseList").querySelector("#courseRow");
-        let lms = new LMSMaster();
-        for(let course of lms.courses){
-          courseItem.clTitle.innerText = course.name;
-          courseItem.clTime.innerText = course.time;
-          courseItem.clDesc.innerText = course.description;
+
+        for(let course of courseList){
+          let tempItem = courseItem;
+          tempItem.clTitle.innerText = course.name;
+          tempItem.clTime.innerText = course.time;
+          tempItem.clDesc.innerText = course.description;
           section.appendChild(courseItem);
+        }
+      }
+      function setParticipantList(participantsList){
+        let section = document.getElementById("participantList").querySelector("#participantRow");
+        for(participants of participantsList){
+          let tempItem = userItem;
+          tempItem.pname = participants.name;
+          tempItem.pcList = participants.courseTaken;
         }
       }
     </script>
@@ -111,12 +147,12 @@
     </section>
     <section id="participantList" class="d-none">
       <div class="container-fluid">
-        <div class="row">
+        <div class="row" id="participantRow">
           <div class="col-sm-2" id="userItem">
             <div class="card" style="width: 18rem;">
               <div class="card-body">
-                <h5 class="card-title">Joy Gohil</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Courses</h6>
+                <h5 class="card-title" id="pname">Joy Gohil</h5>
+                <h6 class="card-subtitle mb-2 text-muted" id="pcList">Courses</h6>
                 <a href="#" class="btn btn-primary">Remove</a>
                 <a href="#" class="btn btn-primary">Assigne Course</a>
               </div>
@@ -130,7 +166,7 @@
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="participantModalTitle">Add Participant</h5>
+              <h5 class="modal-title" id="participantModalTitle">Add Course</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -138,7 +174,11 @@
             <div class="modal-body">
                 <div class="form-group">
                   <label for="ctitle">Course Title</label>
-                  <input type="email" class="form-control" id="ctitle" placeholder="name@example.com">
+                  <input type="text" class="form-control" id="ctitle" placeholder="name@example.com">
+                </div>
+                <div class="form-group">
+                  <label for="ctime">Course Time</label>
+                  <input type="text" class="form-control" id="ctime" placeholder="2">
                 </div>
                 <div class="form-group">
                   <label for="cdesc">Course Description</label>
@@ -147,7 +187,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">x</button>
-              <button type="submit" id="csubmit" class="btn btn-primary">+</button>
+              <button type="submit" onclick="addCourse()" id="csubmit" class="btn btn-primary">+</button>
             </div>
         </div>
       </div>
@@ -155,7 +195,6 @@
     <div class="modal fade" id="participantModal" tabindex="-1" role="dialog" aria-labelledby="paticipantModalTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-          <form>
             <div class="modal-header">
               <h5 class="modal-title" id="participantModalTitle">Add Participant</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -165,11 +204,11 @@
             <div class="modal-body">
                 <div class="form-group">
                   <label for="pname">Name</label>
-                  <input type="email" class="form-control" id="pname" placeholder="name@example.com">
+                  <input type="text" class="form-control" id="pname" placeholder="name@example.com">
                 </div>
                 <div class="form-group">
                   <label for="pid">User ID</label>
-                  <input type="email" class="form-control" id="pid" placeholder="name@example.com">
+                  <input type="text" class="form-control" id="pid" placeholder="name@example.com">
                 </div>
                 <div class="form-group">
                   <label for="ppassword">Password</label>
@@ -178,12 +217,13 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">x</button>
-              <button type="submit" id="psubmit" class="btn btn-primary">+</button>
+              <button type="submit" onclick="addParticipant()" id="psubmit" class="btn btn-primary">+</button>
             </div>
-          </form>
         </div>
       </div>
     </div>
+
+
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
