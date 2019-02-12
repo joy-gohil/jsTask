@@ -4,8 +4,21 @@ class Storage{
         if(Storage.exists){
             return Storage.instance;
         }
+        this._sessionId = null;
+        this._sessionType = null;
+        this._sessionName = null;
         Storage.instance=this;
         Storage.exists = true;
+    }
+
+    getSession(){
+        return { id: this._sessionId, type: this._sessionType, name: this._sessionName };
+    }
+
+    setSession(...sessionData){
+        this._sessionId = sessionData[0];
+        this._sessionName = sessionData[1];
+        this._sessionType = sessionData[2];
     }
 
     getCoursesData(){
