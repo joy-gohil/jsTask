@@ -19,11 +19,11 @@ class Participant{
         if(userId === this.userId && password === this._password){
             return { result: true, message: "Logged in successfully" };
         }else if(userId !== this.userId && password !== this._password ){
-            return { result: true, message: "Oops! Wrong UserId and Password" };
+            return { result: false, message: "Oops! Wrong UserId and Password" };
         }else if(userId !== this.userId){
-            return { result: true, message: "Oops! Wrong UserId" };
+            return { result: false, message: "Oops! Wrong UserId" };
         }else{
-            return { result: true, message: "Oops! Wrong Password" };
+            return { result: false, message: "Oops! Wrong Password" };
         }
     }
 }
