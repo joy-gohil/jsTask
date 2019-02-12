@@ -7,43 +7,45 @@ class LMSMaster{ /* Design Pattern: This is a Singleton class */
 
 		LMSMaster.instance=this;
 		LMSMaster.exists = true;
-		this._courses = [];
-		this._admins = [];
-		this._participants = [];
+		LMSMaster.storage = new Storage();
+		
+		this._courses = (LMSMaster.storage.getCoursesData != null ) ? LMSMaster.storage.getCoursesData : [];
+		this._admins = (LMSMaster.storage.getAdminsData != null ) ? LMSMaster.storage.getCoursesData : [];
+		this._participants = (LMSMaster.storage.getParticipantsData != null ) ? LMSMaster.storage.getCoursesData : [];
 
 		return LMSMaster.instance;
 	}
 
-		/* START: Getter and Setters: 
-		 * Courses, Admins, Participants 
-		 */
+	/* START: Getter and Setters: 
+		* Courses, Admins, Participants 
+		*/
 
-		get courses(){
-			return this._courses;
-		}
+	get courses(){
+		return this._courses;
+	}
 
-		set courses(course){
-			this._courses.push(course);
-		}
+	set courses(course){
+		this._courses.push(course);
+	}
 
-		get admins(){
-			return this._admins;
-		}
+	get admins(){
+		return this._admins;
+	}
 
-		set admins(admin){
-			this._admins.push(admin);	
-		}
+	set admins(admin){
+		this._admins.push(admin);	
+	}
 
-		get participants(){
-			return this._participants;
-		}
+	get participants(){
+		return this._participants;
+	}
 
-		set participants(participant){
-			this._participants.push(participant);	
-		}
+	set participants(participant){
+		this._participants.push(participant);	
+	}
 
-		/* END: Getter and Setters: 
-		 * Courses, Admins, Participants 
-		 */
+	/* END: Getter and Setters: 
+		* Courses, Admins, Participants 
+		*/
 
 }
