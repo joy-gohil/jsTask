@@ -8,11 +8,10 @@ class LMSMaster{ /* Design Pattern: This is a Singleton class */
 		LMSMaster.instance=this;
 		LMSMaster.exists = true;
 		LMSMaster.storage = new Storage();
-		
-		this._courses = (LMSMaster.storage.getCoursesData != null ) ? LMSMaster.storage.getCoursesData : [];
-		this._admins = (LMSMaster.storage.getAdminsData != null ) ? LMSMaster.storage.getCoursesData : [];
-		this._participants = (LMSMaster.storage.getParticipantsData != null ) ? LMSMaster.storage.getCoursesData : [];
-
+		console.log(LMSMaster.storage.getCoursesData);
+		this._courses = (LMSMaster.storage.getCoursesData() != null ) ? LMSMaster.storage.getCoursesData : [];
+		this._admins = (LMSMaster.storage.getAdminsData() != null ) ? LMSMaster.storage.getCoursesData : [];
+		this._participants = (LMSMaster.storage.getParticipantsData() != null ) ? LMSMaster.storage.getCoursesData : [];
 		return LMSMaster.instance;
 	}
 
@@ -33,7 +32,7 @@ class LMSMaster{ /* Design Pattern: This is a Singleton class */
 	}
 
 	set admins(admin){
-		this._admins.push(admin);	
+		this._admins.push(admin);
 	}
 
 	get participants(){
