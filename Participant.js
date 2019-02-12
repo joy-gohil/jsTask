@@ -1,5 +1,5 @@
 class Participant{
-    constructor(name, uuserId, password){
+    constructor(name, userId, password){
         this.name = name;
         this.userId = userId;
         this._coursesTaken = [];
