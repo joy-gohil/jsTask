@@ -10,11 +10,11 @@ class Admin{
         if(adminId === this.adminId && password === this._password){
             return { result: true, message: "Logged in successfully" };
         }else if(adminId !== this.adminId && password !== this._password ){
-            return { result: true, message: "Oops! Wrong UserId and Password" };
+            return { result: false, message: "Oops! Wrong UserId and Password" };
         }else if(adminId !== this.adminId){
-            return { result: true, message: "Oops! Wrong UserId" };
+            return { result: false, message: "Oops! Wrong UserId" };
         }else{
-            return { result: true, message: "Oops! Wrong Password" };
+            return { result: false, message: "Oops! Wrong Password" };
         }
     }
 

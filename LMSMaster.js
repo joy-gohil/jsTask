@@ -8,7 +8,7 @@ class LMSMaster{ /* Design Pattern: This is a Singleton class */
 		LMSMaster.instance=this;
 		LMSMaster.exists = true;
 		LMSMaster.storage = new Storage();
-		console.log(LMSMaster.storage.getCoursesData);
+		
 		this._courses = (LMSMaster.storage.getCoursesData() != null ) ? LMSMaster.storage.getCoursesData : [];
 		this._admins = (LMSMaster.storage.getAdminsData() != null ) ? LMSMaster.storage.getCoursesData : [];
 		this._participants = (LMSMaster.storage.getParticipantsData() != null ) ? LMSMaster.storage.getCoursesData : [];
