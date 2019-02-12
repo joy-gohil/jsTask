@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css" integrity="sha384-PDle/QlgIONtM1aqA2Qemk5gPOE7wFq8+Em+G/hmo5Iq0CCmYZLv3fVRDJ4MMwEA" crossorigin="anonymous">
+
+    <title>JS Task LMS</title>
+
+    <script type="text/javascript" src="js/Storage.js"></script>
+    <script type="text/javascript" src="js/LMSMaster.js"></script>
+    <script type="text/javascript" src="js/Course.js"></script>
+    <script type="text/javascript" src="js/Participant.js"></script>
+    <script type="text/javascript" src="js/Admin.js"></script>
+
+    <script type="text/javascript">
+      let userItem, courseItem;
+      let admin;
+      function onPageloadTM(){
+        document.getElementById("loginSection").classList.remove("d-none");
+        admin = new Admin("joy","admin@lms.com","admin");
+        cloning();
+      }
+      function cloning() {
+          userItem = document.getElementById("userItem").cloneNode(true);
+          courseItem = document.getElementById("courseItem").cloneNode(true);
+          document.getElementById("userItem").remove();
+          document.getElementById("courseItem").remove();
+      }
+      function beginLogin(){
+        let uname = document.getElementById("email").value;
+        let pass = document.getElementById("pass").value;
+        let user = (admin.adminLogin(uname,pass).result)?"admin":"regular";
+        //let user = "admin";
+        if(user === "admin"){
+          document.getElementById("loginSection").remove();
+          document.getElementById("navBarUL").classList.remove("d-none");
+          document.getElementById("courseList").classList.remove("d-none");
+          document.getElementById("participantList").classList.remove("d-none");
+          setCourseList(admin.lmsMaster.courses);
+          setParticipantList(admin.lmsMaster.participants);
+        }else if(user == "regular"){
+          document.getElementById("loginSection").remove();
+          document.getElementById("navBarUL").classList.remove("d-none");
+          document.getElementById("courseList").classList.remove("d-none");
+          document.getElementById("participantList").remove();
+          setCourseList();
+        }
+      }
+      function addParticipants(){
+        let name = document.getElementById("pname").value;
+        let pid = document.getElementById("pid").value;
+        let password = document.getElementById("ppassword").value;
+        admin.addParticipant(name, pid, password);
+        setParticipantList(admin.lmsMaster.participants);
+      }
+      function addCourse(){
+        let title = document.getElementById("ctitle").value;
+        let time = document.getElementById("ctime").value;
+        let desc = document.getElementById("cdesc").value;
+        console.log(title +" : "+ time +" : "+ desc);
+        admin.addCourse(title, desc, time);
+        setCourseList(admin.lmsMaster.courses);      
+      }
+      function setCourseList(courseList){
+        let section = document.getElementById("courseList").querySelector("#courseRow");
+
+        for(let course of courseList){
+          let tempItem = courseItem;
+          tempItem.clTitle.innerText = course.name;
+          tempItem.clTime.innerText = course.time;
+          tempItem.clDesc.innerText = course.description;
+          section.appendChild(courseItem);
+        }
+      }
+      function setParticipantList(participantsList){
+        let section = document.getElementById("participantList").querySelector("#participantRow");
+        for(participants of participantsList){
+          let tempItem = userItem;
+          tempItem.pname = participants.name;
+          tempItem.pcList = participants.courseTaken;
+        }
+      }
+    </script>
+    
+  </head>
+
+  <body class="container-fluid" onload="onPageloadTM()">
+    <section id="navBar" class="" style="height: 100px;">
+      <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navBarBody" aria-controls="navBarBody" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navBarBody">
+            <a class="navbar-brand" href="#">TASK</a>
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0 d-none" id="navBarUL">
+              <li class="nav-item active">
+                <a class="nav-link btn btn-primary" data-toggle="modal" data-target="#courseModal" href="#">Add Course</a>
+              </li>
+              <li class="nav-item active">
+                <a class="nav-link btn btn-primary" data-toggle="modal" data-target="#participantModal" href="#">Add Participant</a>
+              </li>
+              <li class="nav-item active">
+                <a class="nav-link btn btn-primary" href="#" tabindex="-1">Logout</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </section>
+    <section id="loginSection" class="d-none">
+      <div class="container-fluid">
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+          </div>
+          <div class="form-group">
+            <label for="pass">Password</label>
+            <input type="password" class="form-control" id="pass" placeholder="Password">
+          </div>
+          <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="remember">
+            <label class="form-check-label" for="remember">Remember Me!</label>
+          </div>
+          <button type="submit" class="btn btn-primary" onclick="beginLogin()">Submit</button>
+      </div>
+    </section>
+    <section id="courseList" class="d-none">
+      <div class="container-fluid">
+        <div class="row" id="courseRow">
+          <div class="col-sm-4" id="courseItem">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title" id="clTitle"></h5>
+                <h5 class="card-title" id="clTime"></h5>
+                <p class="card-text" id="clDesc"></p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="participantList" class="d-none">
+      <div class="container-fluid">
+        <div class="row" id="participantRow">
+          <div class="col-sm-2" id="userItem">
+            <div class="card" style="width: 18rem;">
+              <div class="card-body">
+                <h5 class="card-title" id="pname">Joy Gohil</h5>
+                <h6 class="card-subtitle mb-2 text-muted" id="pcList">Courses</h6>
+                <a href="#" class="btn btn-primary">Remove</a>
+                <a href="#" class="btn btn-primary">Assigne Course</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="modal fade" id="courseModal" tabindex="-1" role="dialog" aria-labelledby="courseModalTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="participantModalTitle">Add Course</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                  <label for="ctitle">Course Title</label>
+                  <input type="text" class="form-control" id="ctitle" placeholder="name@example.com">
+                </div>
+                <div class="form-group">
+                  <label for="ctime">Course Time</label>
+                  <input type="text" class="form-control" id="ctime" placeholder="2">
+                </div>
+                <div class="form-group">
+                  <label for="cdesc">Course Description</label>
+                  <textarea class="form-control" id="cdesc" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">x</button>
+              <button type="submit" onclick="addCourse()" id="csubmit" class="btn btn-primary">+</button>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="participantModal" tabindex="-1" role="dialog" aria-labelledby="paticipantModalTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="participantModalTitle">Add Participant</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                  <label for="pname">Name</label>
+                  <input type="text" class="form-control" id="pname" placeholder="name@example.com">
+                </div>
+                <div class="form-group">
+                  <label for="pid">User ID</label>
+                  <input type="text" class="form-control" id="pid" placeholder="name@example.com">
+                </div>
+                <div class="form-group">
+                  <label for="ppassword">Password</label>
+                  <input type="password" class="form-control" id="ppassword" placeholder="name@example.com">
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">x</button>
+              <button type="submit" onclick="addParticipant()" id="psubmit" class="btn btn-primary">+</button>
+            </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/js/bootstrap.min.js" integrity="sha384-7aThvCh9TypR7fIc2HV4O/nFMVCBwyIUKL8XCtKE+8xgCgl/PQGuFsvShjr74PBp" crossorigin="anonymous"></script>
+  </body>
+</html>
