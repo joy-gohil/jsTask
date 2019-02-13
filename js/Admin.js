@@ -4,19 +4,7 @@ class Admin{
         this.adminId = adminId;
         this._password = password;
         this.lmsMaster = new LMSMaster();
-    }
-
-    adminLogin(adminId, password){
-        if(adminId === this.adminId && password === this._password){
-            return { result: true, message: "Logged in successfully" };
-        }else if(adminId !== this.adminId && password !== this._password ){
-            return { result: true, message: "Oops! Wrong UserId and Password" };
-        }else if(adminId !== this.adminId){
-            return { result: true, message: "Oops! Wrong UserId" };
-        }else{
-            return { result: true, message: "Oops! Wrong Password" };
-        }
-    }
+    }    
 
     addCourse(name, description, time){
         let course = new Course(name, description, time);

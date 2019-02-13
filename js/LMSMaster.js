@@ -47,4 +47,29 @@ class LMSMaster{ /* Design Pattern: This is a Singleton class */
 		* Courses, Admins, Participants 
 		*/
 
+	adminLogin(adminId, password){
+
+		let adminIndex = _.findIndex(this.admins,{ adminId: adminId });
+
+		if(adminIndex === -1){
+			return { result: false, message: "Oops! Wrong UserId" };
+		} else if(password === this.admins[adminIndex]._password){
+            return { result: true, message: "Logged in successfully" };
+        }else{
+            return { result: false, message: "Oops! Wrong UserId and Password" };
+      	}
+    }
+
+    participantLogin(userId, password){
+
+    	let participantIndex = _.findIndex(this.participants,{ userId: userId });
+
+		if(participantIndex === -1){
+			return { result: false, message: "Oops! Wrong UserId" };
+		} else if(password === this.participants[participantIndex]._password){
+            return { result: true, message: "Logged in successfully" };
+        }else{
+            return { result: false, message: "Oops! Wrong UserId and Password" };
+      	}
+    }
 }
